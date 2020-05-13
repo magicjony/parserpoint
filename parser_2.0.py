@@ -6,12 +6,12 @@ HOST = 'https://technopoint.ru'
 
 import csv
 from multiprocessing import Pool
-#получаем адрес
+#get the site address
 def get_html(url, params=None):
     r = requests.get(url, headers=HEADERS, params=params)
     return r.text
 
-#получаем список ссылок на каждый телефон
+#get a list of links to each phone
 def get_all_links(html):
     soup = BeautifulSoup(html, 'html.parser')
     
@@ -29,7 +29,7 @@ def get_all_links(html):
                 n += 1
         
     return links    
-# составлем список данных которые будем "парсить""   
+# make a list of data that we will take
 def get_page_data(html):
     soup = BeautifulSoup(html, 'html.parser')
     name = soup.find('h1', class_='page-title price-item-title').get_text(strip=True)   
@@ -42,20 +42,20 @@ def get_page_data(html):
             
    
     
-#запись в документ
+#writing to a document
 def write_csv(data):
     with open('list.csv','a', newline='') as f:
         writer = csv.writer(f, delimiter=';')
         writer.writerow(['наименование', 'серийный номер', 'цена', 'ссылка на изображение'])
         writer.writerow(( data['name'],data['serial'],data['price'],data['img']))
         print(data['name'], 'parsed')  
-# сборка всех нужных нам данных и запись их в файл    
+# assembly of all the data we need and writing them to a file
 def make_all(url):
     html = get_html(url)
         
     data = get_page_data(html)
     write_csv(data)
-#собираем всю эту матрешку   
+#collect all this nesting doll
 def main():
     
     url = 'https://technopoint.ru/catalog/recipe/e351231ca6161134/2020-goda/'
